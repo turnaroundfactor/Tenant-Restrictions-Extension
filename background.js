@@ -25,16 +25,17 @@ async function getUserConfig() {
 
 // Function to create rules for the specified domains
 async function createRules() {
-  const domains = ["login.microsoftonline.com", "login.microsoft.com", "login.windows.net", "login.live.com"];
-  const ids = [5001, 5002, 5003, 5004];
+  const microsoft_commercial_domains = ["login.microsoftonline.com", "login.microsoft.com", "login.windows.net", "login.live.com"];
+  const microsoft_commercial_ids = [5001, 5002, 5003, 5004];
+  const microsoft_commercial_header = "sec-Restrict-Tenant-Access-Policy"
 
   // Retrieve the user's configuration from storage.sync
   const userConfig = await getUserConfig();
   const accessHeaderValue = `${userConfig.tenantID}:${userConfig.policyGUID}`;
 
   // Create or update rules for each domain with user-configured or managed settings
-  const newRules = domains.map((domain, index) => {
-    const id = ids[index];
+  const newRules = microsoft_commercial_domains.map((domain, index) => {
+    const id = microsoft_commercial_ids[index];
   //  const accessHeaderValue = `${userConfig.tenantID}:${userConfig.policyGUID}`;
     return {
       id: id,
@@ -42,7 +43,7 @@ async function createRules() {
       action: {
         type: "modifyHeaders",
         requestHeaders: [
-          { header: "sec-Restrict-Tenant-Access-Policy", operation: "set", value: accessHeaderValue },
+          { header: microsoft_commercial_header, operation: "set", value: accessHeaderValue },
         ],
       },
       condition: { urlFilter: domain, resourceTypes: ["main_frame"] },
